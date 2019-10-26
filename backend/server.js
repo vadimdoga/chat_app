@@ -14,6 +14,7 @@ app.use("/chats", chatRoute)
 io.on('connection', (socket) => {
   socket.on('userData', (userData) => {
     const name = userData
+    socket.emit('sendName', name)
     console.log(name + " connected.")
     socket.on('disconnect', () => {
       console.log(name + " disconnected")
@@ -21,7 +22,7 @@ io.on('connection', (socket) => {
 
     socket.on('msg', (msgData) => {
       console.log(msgData)
-      socket.broadcast.emit("received", {message: msgData, sender: name})
+      io.emit("received", {message: msgData, sender: name})
 
       dbConnection.then(db => {
         console.log("Connected to db")

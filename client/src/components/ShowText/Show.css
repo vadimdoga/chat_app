@@ -1,12 +1,38 @@
 .sender{
-  opacity: 0.3;
+  opacity: 0.6;
+  width: 15%;
 }
-.chat-text{
-  border: 1px solid gray;
-  width: 50%;
-  display: block;
-  
+.chat-box li{
+  list-style-type: none;
+  width: 40%;
+  white-space: normal;
+  word-break: break-all;
+  border-radius: 10px;
+}
+.flex-container-true{
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 10px;
+}
+.flex-container-false{
+  width: 100%;
+  display: flex;
+  flex-direction: row-reverse;
+  margin-bottom: 10px;
+}
+.chat-text-true{
+  margin-left: auto;
+  background-color: blueviolet;
+}
+.chat-text-false{
+  margin-right: auto;
+  background-color: coral;
+
 }
 .chat-box{
   border: 1px solid red;
+  width: 50%;
+  display: block;
+  padding: 0;
+  margin: auto;
 }

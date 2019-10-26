@@ -1,12 +1,14 @@
 import React, { Component } from 'react'
 import axios from 'axios'
 import './Show.css'
+
 export default class Show extends Component {
   constructor(props){
     super(props)
     this.state = {
       messages: [],
-      msgData: []
+      msgData: [],
+      senderName: ""
     }
     this.props.socket.on('received', (entry) => {
       console.log(entry)
@@ -14,9 +16,15 @@ export default class Show extends Component {
         msgData: [...prevState.msgData, entry]
       }))
     })
-  
+    this.props.socket.on('sendName', (entry) => {
+      this.setState({
+        senderName: entry
+      })
+    })
+    this.scrollToBottom = this.scrollToBottom.bind(this)
   }
   componentDidMount() {
+    this.scrollToBottom()
     axios.get('http://localhost:8080/chats')
       .then(res => {
         console.log(res)
@@ -26,21 +34,33 @@ export default class Show extends Component {
         })
       })
   }
+  componentDidUpdate() {
+    this.scrollToBottom()
+  }
+  scrollToBottom = () => {
+    this.messagesEnd.scrollIntoView();
+  }
   render(){
     return(
-      <div className="chat-box">
+      <ul className="chat-box">
         {this.state.messages.map(msg => 
-          <p className="chat-text" key={msg._id}>
-            <span className="sender">{msg.sender}</span> {msg.message} 
-          </p>
+          <div className = {this.state.senderName === msg.sender ? "flex-container-true":"flex-container-false"}>
+            <li className={this.state.senderName === msg.sender ? "chat-text-true":"chat-text-false"} key={msg._id}>
+            {msg.message} 
+            </li>
+            <span className="sender" >{msg.sender}</span>       
+          </div>
         )}
         {this.state.msgData.map((msg, index) => 
-          <p className="chat-text" key={index}>
-            <span className="sender">{msg.sender}</span> {msg.message} 
-          </p>
+          <div className = {this.state.senderName === msg.sender ? "flex-container-true":"flex-container-false"}>
+            <li className={this.state.senderName === msg.sender ? "chat-text-true":"chat-text-false"} key={index}>
+              {msg.message} 
+            </li>
+            <span className="sender" >{msg.sender}</span> 
+          </div>
         )} 
-     
-      </div>
+        <div ref={(el) => { this.messagesEnd = el; }}></div>
+      </ul>
     )
   }
 }

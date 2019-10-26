@@ -1,6 +1,5 @@
 import React from 'react'
 import './UserData.css'
-
 export default class UserData extends React.Component{
   constructor(){
     super()
@@ -14,7 +13,6 @@ export default class UserData extends React.Component{
     evt.preventDefault()
 
     this.props.socket.emit('userData', this.state.name)
-
     let modal = document.getElementsByClassName("modal")[0]
     modal.style.display = "none"
   }
