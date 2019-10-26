@@ -1,7 +1,4 @@
 import React, { Component } from 'react'
-import io from 'socket.io-client'
-const socket = io.connect('http://localhost:8080')
-
  export default class Emit extends Component{
    constructor(){
      super()
@@ -19,7 +16,7 @@ const socket = io.connect('http://localhost:8080')
   sendToServer(evt) {
     evt.preventDefault();
 
-    socket.emit('msg', this.state.msg)
+    this.props.socket.emit('msg', this.state.msg)
     
     this.setState({
       msg:""

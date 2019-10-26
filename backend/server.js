@@ -7,28 +7,28 @@ const Chat = require('./ChatSchema')
 const dbConnection = require('./dbConnection')
 const bodyParser = require('body-parser')
 const chatRoute = require('./chatRoute')
-
+const cors = require('cors')
 app.use(bodyParser.json());
-
+app.use(cors())
 app.use("/chats", chatRoute)
-
 io.on('connection', (socket) => {
-  console.log("User connected.")
-  
-  socket.on('disconnect', () => {
-    console.log("User disconnected")
-  })
+  socket.on('userData', (userData) => {
+    const name = userData
+    console.log(name + " connected.")
+    socket.on('disconnect', () => {
+      console.log(name + " disconnected")
+    })
 
-  socket.on('msg', (msgData) => {
-    console.log(msgData)
+    socket.on('msg', (msgData) => {
+      console.log(msgData)
+      socket.broadcast.emit("received", {message: msgData, sender: name})
 
-    socket.broadcast.emit("received",msgData)
+      dbConnection.then(db => {
+        console.log("Connected to db")
 
-    dbConnection.then(db => {
-      console.log("Connected to db")
-
-      let chatMessage = new Chat({message: msgData, sender: "Anon"})
-      chatMessage.save()
+        let chatMessage = new Chat({message: msgData, sender: name})
+        chatMessage.save()
+      })
     })
   })
 })
