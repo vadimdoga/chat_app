@@ -23,7 +23,6 @@ export default class Show extends Component {
       });
     });
     this.props.socket.on("connectedUsers", entry => {
-      console.log(entry);
       this.setState({
         connectedUsers: entry
       });
@@ -34,7 +33,6 @@ export default class Show extends Component {
   componentDidMount() {
     this.scrollToBottom();
     axios.get("http://localhost:8080/chats").then(res => {
-      console.log(res);
       const messages = res.data;
       this.setState({
         messages: messages

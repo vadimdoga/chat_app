@@ -39,6 +39,7 @@
 .chat-box{
   border: 10px solid #A13941;
   border-top: 0px;
+  border-bottom: 2px solid #A13941;
   width: 50%;
   display: block;
   padding: 0;
