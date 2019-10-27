@@ -1,0 +1,16 @@
+.input-text{
+  border: 10px solid #A13941FF;
+  border-bottom: 5px solid #A13941FF;
+  border-top: 7px solid #A13941FF;
+  width: 40%;
+}
+.input-submit{
+  width: 10%;
+  background-color:#A13941FF ;
+  border: 6px solid #A13941FF;
+  border-left: 0;
+  border-right: 5px solid #A13941FF;
+  padding: 0;
+  color: #FCF6F5;
+  font-size: 15px;
+}

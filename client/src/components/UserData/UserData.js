@@ -1,20 +1,33 @@
 import React from 'react'
 import './UserData.css'
 export default class UserData extends React.Component{
-  constructor(){
-    super()
+  constructor(props){
+    super(props)
     this.state = {
-      name: ""
+      name: "",
+      connectedUsers: false
     }
+
     this.handelSubmit = this.handelSubmit.bind(this)
     this.handleChange = this.handleChange.bind(this)
   }
   handelSubmit(evt){
     evt.preventDefault()
-
+    //send name to server
     this.props.socket.emit('userData', this.state.name)
-    let modal = document.getElementsByClassName("modal")[0]
-    modal.style.display = "none"
+
+    //check result from server if name is already connected
+    this.props.socket.on("availableNickname", entry => {
+      if(entry){
+        let modal = document.getElementsByClassName("modal")[0]
+        modal.style.display = "none"
+      } else {
+        this.setState({
+          name: "This name is already used"
+        })
+      }
+    })
+
   }
   handleChange(evt){
     this.setState({
