@@ -9,10 +9,11 @@ export default class Show extends Component {
       messages: [],
       msgData: [],
       senderName: "",
-      connectedUsers: 0
+      connectedUsers: 0,
+      typing: false,
+      typingName: []
     };
     this.props.socket.on("received", entry => {
-      console.log(entry);
       this.setState(prevState => ({
         msgData: [...prevState.msgData, entry]
       }));
@@ -27,12 +28,27 @@ export default class Show extends Component {
         connectedUsers: entry
       });
     });
+    this.props.socket.on("typingTrue", entry => {
+      this.setState({
+        typing: true
+      });
+      if (!this.state.typingName.includes(entry)) {
+        this.setState(prevState => ({
+          typingName: [...prevState.typingName, entry]
+        }));
+      }
+      setTimeout(() => {
+        this.setState({
+          typing: false
+        });
+      }, 3000);
+    });
 
     this.scrollToBottom = this.scrollToBottom.bind(this);
   }
   componentDidMount() {
     this.scrollToBottom();
-    axios.get("http://localhost:8080/chats").then(res => {
+    axios.get("http://192.168.0.3:8080/chats").then(res => {
       const messages = res.data;
       this.setState({
         messages: messages
@@ -106,6 +122,21 @@ export default class Show extends Component {
             </span>
           </div>
         ))}
+        {this.state.typing
+          ? this.state.typingName.map(name => (
+              <div>
+                <span className="sender">{name}</span>
+                <span className="dot"></span>
+                <span className="dot"></span>
+                <span className="dot"></span>
+              </div>
+            ))
+          : 
+          this.state.typingName.splice(
+              this.state.typingName.indexOf(0)
+            )
+            }
+
         <div
           ref={el => {
             this.messagesEnd = el;

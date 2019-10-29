@@ -5,6 +5,14 @@
 .sender-hide{
   display: none;
 }
+.sender-type{
+  color: #D4B996;
+  padding: 0;
+  padding-right: 5px;
+  border: 2px solid blue;
+  margin: 0;
+  display: inline-block;
+}
 .chat-box li{
   list-style-type: none;
   width: 40%;
@@ -68,4 +76,29 @@
   font-size: 20px;
   font-weight: 700;
   color: #232b2b;
+}
+/* Typing */
+@-webkit-keyframes dots{
+  25% {background-color: gray;}
+  50% {background-color: lightgrey;}
+  75% {background-color: gray;}
+  100% {background-color: lightgrey;}
+}
+@keyframes dots{
+  25% {background-color: gray;}
+  50% {background-color: lightgrey;}
+  75% {background-color: gray;}
+  100% {background-color: lightgrey;}
+}
+.dot{
+  height: 15px;
+  width: 15px;
+  background-color: lightgrey;
+  border-radius: 50%;
+  margin: 2px;
+  display: inline-block;
+  animation-name: dots;
+  animation-duration: 2s; 
+  -webkit-animation-name: dots;
+  -webkit-animation-duration: 2s; 
 }
