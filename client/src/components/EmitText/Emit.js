@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import './Emit.css'
-import bigInt from 'big-integer'
+import RSA from '../../containers/RSA'
  export default class Emit extends Component{
    constructor(props){
      super(props)
@@ -9,7 +9,6 @@ import bigInt from 'big-integer'
       publicObject: Object
     }
     
-
     this.handleChange = this.handleChange.bind(this)
     this.sendToServer = this.sendToServer.bind(this)
     this.handleKey = this.handleKey.bind(this)
@@ -18,7 +17,6 @@ import bigInt from 'big-integer'
     this.setState({
       msg: evt.target.value
     })
-    // this.props.socket.emit("typing",true)
 
   }
   handleKey(){
@@ -35,14 +33,11 @@ import bigInt from 'big-integer'
   sendToServer(evt) {
     evt.preventDefault();
     if(this.state.msg !== ""){
-      const encodedMessage = this.encode(this.state.msg)
+      const encodedMessage = RSA.encode(this.state.msg)
       const publicKey = Object.values(this.state.publicObject)[0]
       const publicExp = Object.values(this.state.publicObject)[1]
-      console.log("Encoded Message: " + encodedMessage)
-      console.log("Public Key: " + publicKey)
-      console.log("Public Exponent: " + publicExp)
-      const encryptedMessage = this.encrypt(encodedMessage, publicKey, publicExp)
-      console.log("Encrypted message: " + encryptedMessage)
+      const encryptedMessage = RSA.encrypt(encodedMessage, publicKey, publicExp)
+      console.log("Encrypted message to server: " + encryptedMessage)
       this.props.socket.emit('msg', encryptedMessage)
       
       this.setState({
@@ -51,17 +46,7 @@ import bigInt from 'big-integer'
     }
     
   }
-  encode = (str) => {
-    const codes = str
-      .split('')
-      .map(i => i.charCodeAt())
-      .join('')
-
-    return bigInt(codes)
-  }
-  encrypt = (encodedMsg, n, e) => {
-    return bigInt(encodedMsg).modPow(e, n)
-  }
+  
    render(){
      return(
        <div>

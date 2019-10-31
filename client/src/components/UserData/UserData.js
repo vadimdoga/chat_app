@@ -21,6 +21,7 @@ export default class UserData extends React.Component{
       if(entry){
         let modal = document.getElementsByClassName("modal")[0]
         modal.style.display = "none"
+        this.props.socket.emit('keys', {publicKey: this.props.publicKey, publicExp: this.props.publicExp})
       } else {
         this.setState({
           name: "This name is already used"

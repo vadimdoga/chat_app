@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import "./Show.css";
-
+import RSA from '../../containers/RSA'
 export default class Show extends Component {
   constructor(props) {
     super(props);
@@ -14,8 +14,18 @@ export default class Show extends Component {
       typingName: []
     };
     this.props.socket.on("received", entry => {
+      console.log("received")
+      const serverEncryptedMessage = Object.values(entry)[0]
+      const sender = Object.values(entry)[1]
+
+      console.log("Encrypted message from server: " + serverEncryptedMessage)
+      console.log("pbkey: " + this.props.publicKey)
+      console.log("prkey: " + this.props.privateKey)
+      const newServerEncryptedMessage = RSA.decrypt(serverEncryptedMessage, this.props.privateKey, this.props.publicKey)
+      const newServerDecodedMessage = RSA.decode(newServerEncryptedMessage)
+      console.log("Decrypted message from server: " + newServerDecodedMessage)
       this.setState(prevState => ({
-        msgData: [...prevState.msgData, entry]
+        msgData: [...prevState.msgData, {message: newServerDecodedMessage, sender: sender}]
       }));
     });
     this.props.socket.on("sendName", entry => {
@@ -61,6 +71,7 @@ export default class Show extends Component {
   scrollToBottom = () => {
     this.messagesEnd.scrollIntoView();
   };
+
   render() {
     return (
       <ul className="chat-box">
