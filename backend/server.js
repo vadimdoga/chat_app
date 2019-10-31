@@ -11,6 +11,7 @@ const chatRoute = require('./chatRoute')
 const cors = require('cors')
 const RSA = require('./rsa')
 const path = require('path');
+const DSA = require('z-dsa2')()
 let connectedUsers = []
 let usersKeys = []
 let userIds = []
@@ -29,6 +30,16 @@ console.log('Keys:')
 console.log('Public Key: ', keys.n.toString())
 console.log('Private Key: ', keys.d.toString()) 
 console.log('Public Exponent ', keys.e.toString())
+//generate DSA keys
+const dsaKeys = DSA.keyPairNew()
+const dsaPrivateKey = dsaKeys.private
+const dsaPublicKey = dsaKeys.public
+let msg = "hellofromvadim"
+let signature = DSA.sign(dsaPrivateKey, msg)
+if(DSA.verify(dsaPublicKey, msg, signature) === 0){
+  console.log("false signature")
+}
+
 
 io.on('connection', (socket) => {
   socket.on('userData', (userData) => {
@@ -55,10 +66,28 @@ io.on('connection', (socket) => {
         console.log("Public Key received from client")
         const clientPublicKey = Object.values(entry)[0]
         const clientPublicExp = Object.values(entry)[1]
-        usersKeys.push({publicKey: clientPublicKey, publicExp: clientPublicExp, name: name})        
+        const dsaPublicKey = Object.values(entry)[2]
+        const dsaPrivateKey = Object.values(entry)[3]
+        usersKeys.push({
+          publicKey: clientPublicKey, 
+          publicExp: clientPublicExp, 
+          name: name,
+          dsaPublicKey: dsaPublicKey,
+          dsaPrivateKey: dsaPrivateKey
+        })        
       })
       //send message to all
-      socket.on('msg', (msgData) => {
+      socket.on('msg', (entry) => {
+        const msgData = Object.values(entry)[0]
+        const signature = Object.values(entry)[1]
+
+        const decryptedSignature = RSA.decrypt(signature, keys.d, keys.n)
+        // const decodedSignature = RSA.decode(decryptedSignature)
+        console.log("Decoded Signature from client: " + decryptedSignature)
+        if(DSA.verify(dsaPublicKey, decodedSignature, decryptedSignature) === 0){
+          console.log("False Signature")
+        }
+
         console.log("Encrypted Message from client: " + msgData)
         const decryptedMessage = RSA.decrypt(msgData, keys.d, keys.n)
         const decodedMessage = RSA.decode(decryptedMessage)
@@ -71,8 +100,12 @@ io.on('connection', (socket) => {
               const clientPublicExp = userKey.publicExp
               const encodeMessageToClient = RSA.encode(decodedMessage)
               const encryptMessageToClient = RSA.encrypt(encodeMessageToClient, clientPublicKey, clientPublicExp)
+
+              // const encodeSignatureToClient = RSA.encode(decodedSignature)
+              const encryptSignatureToClient = RSA.encrypt(decodedSignature, clientPublicKey, clientPublicExp)
+
               console.log("Encrypted message to : " + userId.name + encryptMessageToClient)
-              io.to(`${userId.id}`).emit('received', {message: encryptMessageToClient, sender: name})
+              io.to(`${userId.id}`).emit('received', {message: encryptMessageToClient, sender: name, signature: encryptSignatureToClient})
             }
           })
         })  

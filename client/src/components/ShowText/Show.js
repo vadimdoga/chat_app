@@ -3,6 +3,7 @@ import axios from "axios";
 import "./Show.css";
 import RSA from '../../containers/RSA'
 const ip = 'http://192.168.0.3:8080/chats'
+const DSA = require('z-dsa2')()
 
 export default class Show extends Component {
   constructor(props) {
@@ -19,15 +20,24 @@ export default class Show extends Component {
       console.log("received")
       const serverEncryptedMessage = Object.values(entry)[0]
       const sender = Object.values(entry)[1]
-
+      const serverEncryptedSignature = Object.values(entry)[2]
+      //decrypt message
       console.log("Encrypted message from server: " + serverEncryptedMessage)
       console.log("pbkey: " + this.props.publicKey)
       console.log("prkey: " + this.props.privateKey)
-      const newServerEncryptedMessage = RSA.decrypt(serverEncryptedMessage, this.props.privateKey, this.props.publicKey)
-      const newServerDecodedMessage = RSA.decode(newServerEncryptedMessage)
-      console.log("Decrypted message from server: " + newServerDecodedMessage)
+      const decryptedMessageFromServer = RSA.decrypt(serverEncryptedMessage, this.props.privateKey, this.props.publicKey)
+      const decodedMessageFromServer = RSA.decode(decryptedMessageFromServer)
+      console.log("Decoded message from server: " + decodedMessageFromServer)
+      //decrypt signature
+      const decryptedSignatureFromServer = RSA.decrypt(serverEncryptedSignature, this.props.privateKey, this.props.publicKey)
+      // const decodedSignatureFromServer = RSA.decode(decryptedSignatureFromServer)
+      console.log("Decoded Signature from server: " + decryptedSignatureFromServer)
+      if(DSA.verify(this.props.dsaPublicKey, decodedMessageFromServer, decryptedSignatureFromServer) === 0){
+        console.log("false signature")
+      }
+      //assign message
       this.setState(prevState => ({
-        msgData: [...prevState.msgData, {message: newServerDecodedMessage, sender: sender}]
+        msgData: [...prevState.msgData, {message: decodedMessageFromServer, sender: sender}]
       }));
     });
     this.props.socket.on("sendName", entry => {

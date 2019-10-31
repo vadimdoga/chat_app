@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import './Emit.css'
 import RSA from '../../containers/RSA'
+const DSA = require('z-dsa2')()
+
  export default class Emit extends Component{
    constructor(props){
      super(props)
@@ -37,8 +39,11 @@ import RSA from '../../containers/RSA'
       const publicKey = Object.values(this.state.publicObject)[0]
       const publicExp = Object.values(this.state.publicObject)[1]
       const encryptedMessage = RSA.encrypt(encodedMessage, publicKey, publicExp)
+      const signature = DSA.sign(this.props.dsaPrivateKey, this.state.msg)
+      // const encodedSignature = RSA.encode(signature)
+      const encryptedSignature = RSA.encrypt(signature) 
       console.log("Encrypted message to server: " + encryptedMessage)
-      this.props.socket.emit('msg', encryptedMessage)
+      this.props.socket.emit('msg', {msg: encryptedMessage, signature: encryptedSignature})
       
       this.setState({
         msg:""
