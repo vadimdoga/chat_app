@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import axios from "axios";
 import "./Show.css";
 import RSA from '../../containers/RSA'
+const ip = 'http://192.168.0.3:8080/chats'
+
 export default class Show extends Component {
   constructor(props) {
     super(props);
@@ -58,7 +60,7 @@ export default class Show extends Component {
   }
   componentDidMount() {
     this.scrollToBottom();
-    axios.get("http://192.168.0.3:8080/chats").then(res => {
+    axios.get(ip).then(res => {
       const messages = res.data;
       this.setState({
         messages: messages
