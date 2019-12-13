@@ -1,7 +1,7 @@
 # Chat App
 
 ### Overview
-A chat app that is created with WebSocket protocol and secured with RSA.
+A responsive chat app that is created with WebSocket protocol and secured with RSA.
 
 ![Annotation 2019-11-05 153017](https://user-images.githubusercontent.com/43139007/68212372-14502800-ffe2-11e9-8772-5d42aa161f48.png)
 
@@ -18,9 +18,6 @@ A chat app that is created with WebSocket protocol and secured with RSA.
 
 ### Configuration
 Before npm start you need to configure the ip in 'server.js','Chat.js' and 'Show.js' with current ip for your network
-
-### Todo
-1. Responsive
 
 ### Built With
 
