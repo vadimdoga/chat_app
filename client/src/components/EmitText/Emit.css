@@ -1,16 +1,39 @@
 .input-text{
   border: 10px solid #A13941FF;
-  border-bottom: 5px solid #A13941FF;
+  border-bottom: 8px solid #A13941FF;
   border-top: 7px solid #A13941FF;
   width: 40%;
 }
 .input-submit{
   width: 10%;
   background-color:#A13941FF ;
-  border: 6px solid #A13941FF;
+  border: 9px solid #A13941FF;
+  border-top: 6px solid #A13941FF;
   border-left: 0;
   border-right: 5px solid #A13941FF;
   padding: 0;
   color: #FCF6F5;
   font-size: 15px;
+}
+@media only screen and (min-width: 320px){
+  .input-text{
+    width: 70%;
+  }
+  .input-submit{
+    width: 20%;
+    border-bottom: 8px solid #A13941FF;
+  }
+}
+@media only screen and (min-width: 430px){
+  .input-text{
+    width: 80%;
+  }
+  .input-submit{
+    width: 10%;
+  }
+}
+@media only screen and (min-width: 1024px){
+  .input-text{
+    width: 40%;
+  }
 }
